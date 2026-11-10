@@ -32,6 +32,16 @@ This repository is the working reference implementation: an Express gateway wher
 | 🥈 **Silver Cop** | The Traffic Manager | Decoupled Express middleware. Reads RSS memory, sheds traffic *before* body parsing, and triggers LIFO teardowns. |
 | 🥉 **Copper Workers** | The Business Logic | The plugins (Cassettes). Zero tracking code. Wake up → do the job → go to sleep. |
 
+## 📼 Everything is a Cassette
+
+The Angel Armor Legacy is built on a single philosophy: **Everything is a Cassette.**
+
+- **The Core Engine** (`src/`) is the Walkman. It handles routing, memory budget, and traffic shedding. It never changes.
+- **The UI Cassette** (`packages/angel-armor-ui/`) is the dashboard. It is portable, dependency-free, and can be dropped into any React project.
+- **The Copper Workers** (`cassettes.ts`) are the plugins. They wake up, do their job, and go to sleep.
+
+This means you can mix and match functionality without ever rebuilding the core. The engine is stable. The Cassettes are infinite.
+
 ---
 
 ## 🔁 The Request Flow
