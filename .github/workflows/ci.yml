@@ -30,3 +30,6 @@ jobs:
 
       - name: Bench
         run: npm run bench
+
+      - name: UI cassette
+        run: npm run verify:ui && npm run export:ui

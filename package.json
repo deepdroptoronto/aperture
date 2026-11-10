@@ -15,6 +15,10 @@
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && node --test dist/tests/",
     "bench": "npm run build && node bench/shed.js",
+    "typecheck:ui": "tsc -p packages/angel-armor-ui/tsconfig.json",
+    "smoke:ui": "tsc -p packages/angel-armor-ui/tsconfig.smoke.json && node dist/ui-smoke/smoke.js",
+    "verify:ui": "npm run typecheck:ui && npm run smoke:ui",
+    "export:ui": "node scripts/export-ui.ts",
     "start": "node dist/src/server.js",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
@@ -32,6 +36,10 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.17.10",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "typescript": "^5.7.2"
   }
 }

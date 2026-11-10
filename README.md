@@ -184,6 +184,24 @@ const aperture = createAperture({
 
 ---
 
+## 📦 The Angel Armor UI
+
+The UI layer ships as its own cassette: [packages/angel-armor-ui](packages/angel-armor-ui) is `@deepdrop/angel-armor-ui`, a portable React package with no database, no network calls and no imports from this engine. React and ReactDOM are its only peers.
+
+```bash
+npm install ./angel-armor-ui-1.0.0.tar.gz
+```
+
+| Component | What it does |
+|---|---|
+| `Mascot` | Armored mascot with `idle`, `walk` and `celebrate` states; scoped CSS keyframes, reduced-motion aware |
+| `WatchPager` | CSS scroll-snap pager with dots, prev/next and arrow-key navigation |
+| `MoneyRain` | Canvas 2D celebration overlay, 64 bills, one frame loop, unmounts itself |
+
+Build the distributable cassette with `npm run export:ui` — it validates the package (React-only peers, no engine imports) and writes `dist/angel-armor-ui-1.0.0.tar.gz`. `npm run verify:ui` typechecks the package and server-renders every component as a smoke check.
+
+---
+
 ## 🧪 Tests
 
 ```bash

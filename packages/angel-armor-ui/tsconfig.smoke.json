@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": false,
+    "rootDir": ".",
+    "outDir": "../../dist/ui-smoke",
+    "types": ["node"]
+  },
+  "include": ["src", "smoke.tsx"]
+}
