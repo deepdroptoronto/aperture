@@ -2,6 +2,10 @@
   "name": "aperture",
   "version": "1.0.0",
   "description": "Aperture Cassette Gateway — the 4-tier, memory-bounded plugin architecture from the Angel Armor legacy.",
+  "author": {
+    "name": "DeepDrop Software Inc.",
+    "email": "deepdropsoftware@gmail.com"
+  },
   "license": "MIT",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
