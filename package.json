@@ -15,6 +15,7 @@
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && node --test dist/tests/",
     "bench": "npm run build && node bench/shed.js",
+    "bench:flood": "npm run build && node bench/flood.js",
     "typecheck:ui": "tsc -p packages/angel-armor-ui/tsconfig.json",
     "smoke:ui": "tsc -p packages/angel-armor-ui/tsconfig.smoke.json && node dist/ui-smoke/smoke.js",
     "verify:ui": "npm run typecheck:ui && npm run smoke:ui",
