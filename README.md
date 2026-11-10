@@ -9,6 +9,7 @@
 [![Pattern v1.0](https://img.shields.io/badge/Pattern-v1.0-brightgreen.svg)]()
 [![Node 18+](https://img.shields.io/badge/Node-18%2B-339933?logo=node.js&logoColor=white)]()
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)]()
+[![CI](https://github.com/deepdroptoronto/aperture/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/deepdroptoronto/aperture/actions/workflows/ci.yml)
 
 </div>
 
