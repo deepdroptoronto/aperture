@@ -5,7 +5,7 @@ Two harnesses live in [`bench/`](../bench):
 | Script | Command | What it measures |
 |---|---|---|
 | `bench/shed.js` | `npm run bench` | Controlled admission: a burst above the cap, steady load under it, and a memory-budget shed |
-| `bench/flood.js` | `npm run bench:flood` | A 6,000-request flood against an **isolated** server process, with that process's RSS sampled over IPC |
+| `bench/flood.js` | `npm run bench:flood` | A 6,000-request flood against an **isolated** server process, with that process's RSS sampled over IPC, plus two per-client fairness scenarios |
 
 Every number below was produced by these scripts, on the machine described here.
 Nothing is quoted from a different environment.
@@ -157,6 +157,39 @@ requests offered.
 
 Run [2] is the control: under the cap, nothing is shed. Run [3] is the only
 place memory shedding is asserted, and it is deliberately deterministic.
+
+### Per-client fairness
+
+The same harness also measures the per-IP limiter, with the server trusting
+`X-Forwarded-For` so one process can act as several clients. Rates are disabled
+(`FLOOD_CLIENT_RATE=0`) in these runs, so they isolate the **slot** limit; rate
+refusals (`429`) are covered by `tests/fairness.test.ts`.
+
+**One greedy client** — 200 requests at 50 concurrent, 2 slots, global cap 8:
+
+```text
+admitted (200)            7
+refused (503 client slot) 193
+refused (429 client rate) 0
+shed by global cap        0
+peak in-flight            2 (client share is 2)
+wall clock                128 ms · shed rate 96.5%
+```
+
+**Two clients** — 40 requests each at 20 concurrent, 2 slots each, global cap 8:
+
+```text
+client 198.51.100.20  admitted 5 · refused 35 · rate-limited 0
+client 198.51.100.21  admitted 4 · refused 36 · rate-limited 0
+shed by global cap        0
+peak in-flight            4
+```
+
+Read the **peak in-flight** column, not the admitted count: admitted exceeds the
+slot count because requests complete and release slots as the pool drains. The
+decisive facts are that peak concurrency never rose above the client's share
+(2), the global cap was never the thing doing the shedding (0 global sheds), and
+two clients each kept their own share while both flooded (peak 4 = 2 + 2).
 
 ## The command
 

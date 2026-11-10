@@ -28,9 +28,19 @@ const aperture = createAperture({
   rootDir: path.join(__dirname, 'cassettes'),
   maxConcurrency: Number(process.env.FLOOD_CAP ?? 8),
   budgetBytes: 224 * MIB,
-  // Fairness would throttle a single load generator long before the global cap,
-  // so it is disabled here: this harness measures the global admission cap.
-  clientLimits: false,
+  // Fairness is opt-in per scenario. With it on, a single load generator is
+  // throttled by its own bucket long before it can reach the global cap.
+  clientLimits:
+    (process.env.FLOOD_CLIENT_MODE ?? 'off') === 'on'
+      ? {
+          maxConcurrency: Number(process.env.FLOOD_CLIENT_SLOTS ?? 2),
+          ratePerSecond: Number(process.env.FLOOD_CLIENT_RATE ?? 0),
+          burst: Number(process.env.FLOOD_CLIENT_BURST ?? 20),
+        }
+      : false,
+  // Fairness scenarios key clients by X-Forwarded-For, so this harness can act
+  // as several distinct clients from one process.
+  trustProxy: process.env.FLOOD_TRUST_PROXY === 'true',
 });
 
 const server = aperture.app.listen(0, '127.0.0.1', () => {
