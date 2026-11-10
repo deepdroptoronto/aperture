@@ -7,7 +7,7 @@ import { CassetteContractError } from '../errors';
 import { createKernel } from '../gold/kernel';
 import type { MountProof } from '../gold/proof';
 import { defineManifest, type Manifest } from '../manifest';
-import { createSilverCop, type SilverCop, type ShedEvent } from '../silver/cop';
+import { createSilverCop, type ClientLimits, type SilverCop, type ShedEvent } from '../silver/cop';
 
 export interface ApertureOptions {
   manifest: Manifest;
@@ -29,6 +29,13 @@ export interface ApertureOptions {
    * never exposed by accident.
    */
   adminToken?: string;
+  /**
+   * Express `trust proxy` setting. Leave `false` (default) behind no proxy: a
+   * client could otherwise spoof `X-Forwarded-For` and bypass per-IP limits.
+   */
+  trustProxy?: boolean | number | string;
+  /** Per-client fairness limits. Pass `false` to disable. */
+  clientLimits?: ClientLimits | false;
   onShed?: (event: ShedEvent) => void;
   onError?: (error: unknown, cassette?: string) => void;
 }
@@ -97,6 +104,7 @@ export function createAperture(options: ApertureOptions): Aperture {
     budgetBytes: options.budgetBytes,
     maxConcurrency: options.maxConcurrency,
     readRss: options.readRss,
+    clientLimits: options.clientLimits,
     teardown: { sleepAll: (sleepOptions) => runtime.sleepAll(sleepOptions) },
     onShed: options.onShed,
     onTeardownError: (error) => options.onError?.(error),
@@ -104,6 +112,8 @@ export function createAperture(options: ApertureOptions): Aperture {
 
   const app = express();
   app.disable('x-powered-by');
+  // Must be set before any middleware reads req.ip.
+  app.set('trust proxy', options.trustProxy ?? false);
 
   const adminToken = options.adminToken?.trim() ? options.adminToken.trim() : undefined;
 

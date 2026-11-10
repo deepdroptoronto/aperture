@@ -54,6 +54,16 @@ throughput-bound and nearly every request is admitted, which tests nothing about
 shedding. The 5 ms latency is what creates queueing pressure against 8 slots.
 The route shape (`POST`, JSON payload, single cassette) is identical.
 
+Per-client fairness is disabled here (`clientLimits: false`) so the single load
+generator's bucket cannot throttle the run before the global admission cap does.
+The shed rate below therefore measures the **global** cap alone; per-client
+behaviour is covered by `tests/fairness.test.ts`.
+
+Per-client fairness is disabled here (`clientLimits: false`) so that a single
+load generator's bucket does not throttle the run before the global admission
+cap does. The shed rate below therefore measures the **global** cap alone;
+per-client behaviour is covered by `tests/fairness.test.ts`.
+
 ### What this does and does not prove
 
 - It proves the concurrency cap holds under a sustained 100-client flood, that

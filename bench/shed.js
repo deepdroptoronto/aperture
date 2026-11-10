@@ -28,7 +28,7 @@ const MANIFEST = {
 };
 
 async function boot(options) {
-  const aperture = createAperture({ manifest: MANIFEST, rootDir: CASSETTES, ...options });
+  const aperture = createAperture({ manifest: MANIFEST, rootDir: CASSETTES, clientLimits: false, ...options });
   const server = await new Promise((resolve, reject) => {
     const listening = aperture.app.listen(0, '127.0.0.1', () => resolve(listening));
     listening.once('error', reject);

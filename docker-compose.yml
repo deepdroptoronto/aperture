@@ -7,10 +7,28 @@ services:
     init: true
     ports:
       - "3000:3000"
+    # Hardening: no writable rootfs, no capabilities, no privilege escalation.
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    # The gateway only needs memory; the 224 MiB budget sits inside this limit.
+    mem_limit: 512m
+    memswap_limit: 512m
+    pids_limit: 256
+    tmpfs:
+      - /tmp:size=16m
+    stop_grace_period: 15s
     environment:
       PORT: "3000"
       APERTURE_BUDGET_BYTES: "234881024"
       APERTURE_MAX_CONCURRENCY: "64"
+      APERTURE_CLIENT_CONCURRENCY: "16"
+      APERTURE_CLIENT_RATE: "20"
+      APERTURE_CLIENT_BURST: "40"
+      # Only enable when a load balancer you operate is in front of this service.
+      APERTURE_TRUST_PROXY: "${APERTURE_TRUST_PROXY:-false}"
       # Set on the host to enable /stats and /__aperture/proof. Empty disables them.
       APERTURE_ADMIN_TOKEN: "${APERTURE_ADMIN_TOKEN:-}"
     restart: unless-stopped

@@ -28,6 +28,9 @@ const aperture = createAperture({
   rootDir: path.join(__dirname, 'cassettes'),
   maxConcurrency: Number(process.env.FLOOD_CAP ?? 8),
   budgetBytes: 224 * MIB,
+  // Fairness would throttle a single load generator long before the global cap,
+  // so it is disabled here: this harness measures the global admission cap.
+  clientLimits: false,
 });
 
 const server = aperture.app.listen(0, '127.0.0.1', () => {

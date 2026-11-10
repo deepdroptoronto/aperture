@@ -31,7 +31,7 @@ This repository is the working reference implementation: an Express gateway wher
 |---|---|---|
 | 💎 **Platinum Engine** | The Immutable Core | Your standard Express server, DB, and Auth. It stays small and never loads plugin code directly. |
 | 🥇 **Gold Kernel** | The Security Elite | Enforces boot-time route proofs. Refuses to start if a rogue plugin tries to mount a backdoor route that isn't in the manifest. |
-| 🥈 **Silver Cop** | The Traffic Manager | Decoupled Express middleware. Reads RSS memory, sheds traffic *before* body parsing, and triggers LIFO teardowns. |
+| 🥈 **Silver Cop** | The Traffic Manager | Decoupled Express middleware. Reads RSS memory, sheds traffic *before* body parsing, caps each client's slots and request rate, and triggers LIFO teardowns. |
 | 🥉 **Copper Workers** | The Business Logic | The plugins (Cassettes). Zero tracking code. Wake up → do the job → go to sleep. |
 
 ## 📼 Everything is a Cassette
@@ -199,6 +199,8 @@ const aperture = createAperture({
 |---|---|---|
 | `budgetBytes` | 224 MiB | RSS above this is shed with 503 `overloaded` |
 | `maxConcurrency` | 64 | In-flight requests before shedding |
+| `clientLimits` | 16 slots/client, 20 req/s, burst 40 | Per-IP fairness; `false` disables it |
+| `trustProxy` | `false` | Express `trust proxy`; required to read `X-Forwarded-For` behind a load balancer |
 | `readRss` | `process.memoryUsage().rss` | Injectable so pressure is testable |
 | `idleMs` | disabled | Idle cassettes are torn down LIFO after this long |
 | `jsonLimit` | `1mb` | Body limit for admitted requests |
@@ -214,6 +216,10 @@ The server reads three variables, documented in [`.env.example`](./.env.example)
 | `APERTURE_BUDGET_BYTES` | `234881024` (224 MiB) | RSS ceiling; above it, requests are shed with 503 |
 | `APERTURE_MAX_CONCURRENCY` | `64` | In-flight ceiling; above it, requests are shed with 503 |
 | `APERTURE_ADMIN_TOKEN` | unset | Bearer token for `/stats` and `/__aperture/proof`; unset disables both (404) |
+| `APERTURE_CLIENT_CONCURRENCY` | `16` | Concurrent slots per client IP (`0` disables) |
+| `APERTURE_CLIENT_RATE` | `20` | Sustained requests/second per client IP (`0` disables) |
+| `APERTURE_CLIENT_BURST` | `40` | Burst allowance per client IP |
+| `APERTURE_TRUST_PROXY` | `false` | Express `trust proxy` hop count or CIDR; `false` ignores `X-Forwarded-For` |
 
 `.env` is git-ignored and `.env.example` is the committed template — `cp .env.example .env` to start.
 

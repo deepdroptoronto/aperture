@@ -43,7 +43,7 @@ manga, anime, or game franchise.
 |---|---|---|---|
 | 💎 Platinum | `src/platinum/engine.ts` | Wiring order, core routes, lifecycle | Loading cassette modules |
 | 🥇 Gold | `src/gold/proof.ts`, `src/gold/kernel.ts` | Route mounting, boot proof | Loading cassette modules |
-| 🥈 Silver | `src/silver/cop.ts` | Admission, shedding, teardown trigger | Reading or parsing bodies |
+| 🥈 Silver | `src/silver/cop.ts` | Admission, per-client fairness, shedding, teardown trigger | Reading or parsing bodies |
 | 🥉 Copper | `src/copper/loader.ts`, `src/copper/types.ts` | Lazy load, invoke, teardown | Routing, mounting, touching the app |
 
 The manifest (`src/manifest.ts`) is the single source of truth for what may
@@ -55,7 +55,10 @@ exist. `src/cassettes.ts` is this repo's manifest.
 
 1. **Silver Cop** runs first. It samples RSS and the in-flight count. Over
    budget or over the cap, it answers `503 {"error":"overloaded","reason":…}`
-   with `Retry-After: 1` and stops the chain. The body is never touched.
+   with `Retry-After: 1` and stops the chain. The body is never touched. A
+   per-client token bucket and slot cap run before the global cap, so one IP
+   cannot occupy the whole sanctuary; over its request rate a client gets
+   `429 {"error":"rate_limited","reason":"client-rate"}` instead.
 2. **Core routes** (`GET /health`, `GET /stats`, `GET /__aperture/proof`) are
    served without loading any plugin code. `/health` is public; the other two
    require a bearer token and are absent when none is configured.
@@ -95,6 +98,8 @@ proof fails closed rather than guessing.
 |---|---|
 | RSS above `budgetBytes` | 503 `overloaded`, reason `memory`; idle cassettes torn down LIFO |
 | In-flight at `maxConcurrency` | 503 `overloaded`, reason `concurrency` |
+| Client over its slot share | 503 `overloaded`, reason `client-concurrency` |
+| Client over its request rate | 429 `rate_limited`, reason `client-rate`, `Retry-After: 1` |
 | Cassette throws | 500 `cassette_failed`, message not leaked |
 | Module violates the contract | 502 `cassette_contract` with the cassette name; module evicted |
 | Malformed JSON on an admitted request | 400 `invalid_json` |
