@@ -100,6 +100,8 @@ The three core routes are `GET /health`, `GET /stats` and `GET /__aperture/proof
 
 ## 🚀 Quick start
 
+![Angel Armor Demo](./docs/demo.gif)
+
 ```bash
 npm install
 npm run build

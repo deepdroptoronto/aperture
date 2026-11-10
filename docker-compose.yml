@@ -1,0 +1,14 @@
+services:
+  aperture:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: deepdrop/aperture:1.0.0
+    init: true
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      APERTURE_BUDGET_BYTES: "234881024"
+      APERTURE_MAX_CONCURRENCY: "64"
+    restart: unless-stopped
