@@ -1,3 +1,4 @@
+// 🥇 The Gold Kernel: The Elite. No route mounts without proof.
 import { createRequire } from 'node:module';
 import type { Express } from 'express';
 import { MissingRouteError, RogueRouteError, RouteOwnershipError, UnprovableRouteError } from '../errors';

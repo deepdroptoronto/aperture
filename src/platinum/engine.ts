@@ -1,3 +1,4 @@
+// 💎 The Platinum Engine: The Divine Core. Immutable.
 import path from 'node:path';
 import express, { type ErrorRequestHandler, type Express, type RequestHandler } from 'express';
 import { CassetteRuntime } from '../copper/loader';

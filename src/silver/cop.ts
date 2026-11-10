@@ -1,3 +1,4 @@
+// 🥈 The Silver Cop: The Watcher. Sheds traffic at 503 before the sanctuary collapses.
 import type { Request, RequestHandler, Response } from 'express';
 
 export const DEFAULT_BUDGET_BYTES = 224 * 1024 * 1024;

@@ -1,3 +1,4 @@
+// 🥉 The Copper Worker: The Mortal. Wakes, works, and returns to dust.
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { ApertureError, CassetteContractError } from '../errors';

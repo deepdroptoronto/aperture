@@ -3,6 +3,8 @@
 # 👑 Angel Armor™
 ### *The 4-Tier Memory-Bounded Plugin Architecture.*
 
+> *"In the legend, the Saints don armor made of divine metals to protect the world from collapse. In Node.js, your server is under siege from memory bloat. **Angel Armor** is the divine armor for your application. It is built in four tiers, each with a sacred duty. The absolute law of the armor: a plugin you never woke up costs zero bytes."*
+
 *Part of the Angel Armor Legacy. Open-sourced by DeepDrop Software Inc. · Created by Angel.*
 
 [![License: MIT + TM](https://img.shields.io/badge/License-MIT%20%2B%20Trademark-yellow.svg)](./LICENSE)
