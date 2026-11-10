@@ -100,7 +100,7 @@ The three core routes are `GET /health`, `GET /stats` and `GET /__aperture/proof
 
 ## 🚀 Quick start
 
-![Angel Armor Demo](./docs/demo.gif)
+<!-- ![Angel Armor Demo](./docs/demo.gif) - Coming soon -->
 
 ```bash
 npm install
@@ -226,6 +226,12 @@ npm test   # builds, then runs the suite with node --test
 - `tests/silver.test.ts` — shed-before-parse, concurrency cap, LIFO reclaim under memory pressure, in-flight cassettes are spared.
 - `tests/copper.test.ts` — cold = zero bytes, cache eviction, exactly-once teardown, LIFO order, single-flight wake, contract violations.
 - `tests/engine.test.ts` — the full four-tier request path, cold sibling cassettes, 404/502/500 mapping, boot-time misconfiguration.
+
+---
+
+## 📊 Benchmarks
+
+Measured on the 2 vCPU / 3.8 GiB dev VM (Node 26), 6,000 requests with 100 concurrent clients against an admission cap of 8: **1,298 admitted (200), 4,702 shed (503 concurrency), 78.4% shed rate**, peak in-flight 8, and server RSS 67.0 MiB → 82.7 MiB. Second run: 1,212 admitted, 4,788 shed, 79.8%, RSS 67.6 MiB → 79.1 MiB. Reproduce with `npm run bench:flood`; hardware, methodology and raw output are in [benchmarks/README.md](benchmarks/README.md).
 
 ---
 
