@@ -204,6 +204,18 @@ const aperture = createAperture({
 | `jsonLimit` | `1mb` | Body limit for admitted requests |
 | `rootDir` | compiled `src/` | Base directory for cassette `moduleId`s |
 
+### Environment variables
+
+The server reads three variables, documented in [`.env.example`](./.env.example). **No API keys are required**: the open-source Harvey cassette makes no model calls and no network requests.
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `PORT` | `3000` | Listen port |
+| `APERTURE_BUDGET_BYTES` | `234881024` (224 MiB) | RSS ceiling; above it, requests are shed with 503 |
+| `APERTURE_MAX_CONCURRENCY` | `64` | In-flight ceiling; above it, requests are shed with 503 |
+
+`.env` is git-ignored and `.env.example` is the committed template — `cp .env.example .env` to start.
+
 ---
 
 ## 📦 The Angel Armor UI

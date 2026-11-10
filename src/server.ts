@@ -35,8 +35,19 @@ const server = aperture.app.listen(port, () => {
 
 async function shutdown(signal: string): Promise<void> {
   console.log(`[platinum] ${signal} received, stopping`);
-  server.close();
+
+  // A slow client must not hold the process open past the orchestrator's grace
+  // period, and idle keep-alive sockets would otherwise keep `close` pending.
+  const force = setTimeout(() => {
+    console.error('[platinum] shutdown exceeded 10s, exiting');
+    process.exit(1);
+  }, 10_000);
+  force.unref();
+
+  server.closeIdleConnections();
+  await new Promise<void>((resolve) => server.close(() => resolve()));
   await aperture.close();
+  clearTimeout(force);
   console.log(`[copper] all cassettes asleep: ${aperture.runtime.stats.sleeps} teardown(s)`);
 }
 
