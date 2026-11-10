@@ -46,6 +46,14 @@ This means you can mix and match functionality without ever rebuilding the core.
 
 ---
 
+### ⚖️ Harvey: open mockup vs. Enterprise
+
+The `harvey` cassette shipped in this repository is a **mockup**. It is deterministic string assembly: no model calls, no API keys, no network. It exists to demonstrate the Copper lifecycle — wake, work, sleep — not to sell anything.
+
+The production Harvey used in **Aperture Vault** is not in this repository and is **not** covered by the MIT license. It requires a commercial license from DeepDrop Software Inc. Do not treat the mockup as the product, and do not assume the Enterprise Harvey can be obtained from this source tree.
+
+---
+
 ## 🔁 The Request Flow
 
 ```text
