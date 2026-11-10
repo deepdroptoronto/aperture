@@ -102,7 +102,7 @@ The production Harvey used in **Aperture Vault** is not in this repository and i
 | Shedding happens before body parsing | Silver Cop is mounted above `express.json()` | `tests/silver.test.ts` (sheds a malformed body with 503, not 400) |
 | Rogue routes cannot boot | Gold Kernel proves the live router against the manifest, including handler ownership | `tests/boot.test.ts` |
 
-The three core routes are `GET /health`, `GET /stats` and `GET /__aperture/proof`. Everything else must be declared in the manifest or boot is refused.
+The three core routes are `GET /health`, `GET /stats` and `GET /__aperture/proof`. `/health` is public; `/stats` and `/__aperture/proof` expose internal telemetry and require `Authorization: Bearer $APERTURE_ADMIN_TOKEN`, and are **disabled (404)** when that token is unset. Everything else must be declared in the manifest or boot is refused.
 
 ---
 
@@ -123,7 +123,7 @@ curl -s localhost:3000/cassettes/harvey/draft \
   -d '{"to":"dana@acme.test","company":"Acme Logistics","product":"Aperture","notes":"halving memory spend"}'
 
 # Harvey is warm, Ledger is still cold
-curl -s localhost:3000/stats
+curl -s -H "Authorization: Bearer $APERTURE_ADMIN_TOKEN" localhost:3000/stats
 
 # Money math is a second cassette, loaded only when used
 curl -s localhost:3000/cassettes/ledger/invoices \
@@ -213,6 +213,7 @@ The server reads three variables, documented in [`.env.example`](./.env.example)
 | `PORT` | `3000` | Listen port |
 | `APERTURE_BUDGET_BYTES` | `234881024` (224 MiB) | RSS ceiling; above it, requests are shed with 503 |
 | `APERTURE_MAX_CONCURRENCY` | `64` | In-flight ceiling; above it, requests are shed with 503 |
+| `APERTURE_ADMIN_TOKEN` | unset | Bearer token for `/stats` and `/__aperture/proof`; unset disables both (404) |
 
 `.env` is git-ignored and `.env.example` is the committed template — `cp .env.example .env` to start.
 

@@ -5,11 +5,13 @@ import { DEFAULT_BUDGET_BYTES, DEFAULT_MAX_CONCURRENCY } from './silver/cop';
 const port = Number(process.env.PORT ?? 3000);
 const budgetBytes = Number(process.env.APERTURE_BUDGET_BYTES ?? DEFAULT_BUDGET_BYTES);
 const maxConcurrency = Number(process.env.APERTURE_MAX_CONCURRENCY ?? DEFAULT_MAX_CONCURRENCY);
+const adminToken = process.env.APERTURE_ADMIN_TOKEN?.trim() || undefined;
 
 const aperture = createAperture({
   manifest: cassetteManifest,
   budgetBytes,
   maxConcurrency,
+  adminToken,
   idleMs: 60_000,
   onShed: (event) => {
     console.warn(
@@ -31,6 +33,11 @@ for (const route of aperture.proof.manifest) {
 const server = aperture.app.listen(port, () => {
   console.log(`[platinum] Aperture Cassette Gateway listening on http://localhost:${port}`);
   console.log(`[silver] budget ${(budgetBytes / 1024 / 1024).toFixed(0)} MiB, max ${maxConcurrency} in-flight`);
+  console.log(
+    adminToken
+      ? '[platinum] /stats and /__aperture/proof require APERTURE_ADMIN_TOKEN'
+      : '[platinum] admin routes disabled (set APERTURE_ADMIN_TOKEN to enable)',
+  );
 });
 
 async function shutdown(signal: string): Promise<void> {

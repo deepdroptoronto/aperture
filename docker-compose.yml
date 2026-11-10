@@ -11,4 +11,6 @@ services:
       PORT: "3000"
       APERTURE_BUDGET_BYTES: "234881024"
       APERTURE_MAX_CONCURRENCY: "64"
+      # Set on the host to enable /stats and /__aperture/proof. Empty disables them.
+      APERTURE_ADMIN_TOKEN: "${APERTURE_ADMIN_TOKEN:-}"
     restart: unless-stopped

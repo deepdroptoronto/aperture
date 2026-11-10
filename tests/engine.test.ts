@@ -7,6 +7,9 @@ import { createAperture } from '../src/platinum/engine';
 import type { Manifest } from '../src/manifest';
 import { post, startAperture } from './helpers';
 
+const ADMIN = 'engine-test-admin-token';
+const auth = { authorization: `Bearer ${ADMIN}` };
+
 const harveyPath = require.resolve(path.join(__dirname, '..', 'src', 'cassettes', 'harvey.js'));
 const ledgerPath = require.resolve(path.join(__dirname, '..', 'src', 'cassettes', 'ledger.js'));
 
@@ -18,7 +21,7 @@ const draft = {
 };
 
 test('a request flows through all four tiers and wakes only the cassette it needs', async (t) => {
-  const harness = await startAperture({ manifest: cassetteManifest });
+  const harness = await startAperture({ manifest: cassetteManifest, adminToken: ADMIN });
   t.after(() => harness.close());
 
   const health = await fetch(`${harness.url}/health`);
@@ -36,7 +39,7 @@ test('a request flows through all four tiers and wakes only the cassette it need
   assert.ok(require.cache[harveyPath], 'harvey is loaded on first use');
   assert.equal(require.cache[ledgerPath], undefined, 'other cassettes stay cold');
 
-  const stats = (await (await fetch(`${harness.url}/stats`)).json()) as {
+  const stats = (await (await fetch(`${harness.url}/stats`, { headers: auth })).json()) as {
     silver: { inflight: number; admitted: number; budgetBytes: number };
     runtime: { wakes: number; warm: string[] };
   };
@@ -65,7 +68,7 @@ test('a request flows through all four tiers and wakes only the cassette it need
 });
 
 test('the boot proof covers core and manifest routes', async (t) => {
-  const harness = await startAperture({ manifest: cassetteManifest });
+  const harness = await startAperture({ manifest: cassetteManifest, adminToken: ADMIN });
   t.after(() => harness.close());
 
   assert.deepEqual(harness.aperture.proof.core, ['GET /health', 'GET /stats', 'GET /__aperture/proof']);
@@ -74,7 +77,7 @@ test('the boot proof covers core and manifest routes', async (t) => {
     'POST /cassettes/ledger/invoices',
   ]);
 
-  const published = (await (await fetch(`${harness.url}/__aperture/proof`)).json()) as { total: number };
+  const published = (await (await fetch(`${harness.url}/__aperture/proof`, { headers: auth })).json()) as { total: number };
   assert.equal(published.total, 5);
 });
 

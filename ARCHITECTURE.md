@@ -57,7 +57,8 @@ exist. `src/cassettes.ts` is this repo's manifest.
    budget or over the cap, it answers `503 {"error":"overloaded","reason":…}`
    with `Retry-After: 1` and stops the chain. The body is never touched.
 2. **Core routes** (`GET /health`, `GET /stats`, `GET /__aperture/proof`) are
-   served without loading any plugin code.
+   served without loading any plugin code. `/health` is public; the other two
+   require a bearer token and are absent when none is configured.
 3. **Body parsing** (`express.json`) runs only for admitted requests.
 4. **Gold route** matches a manifest route and calls the runtime with the
    cassette name and its module id.

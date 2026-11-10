@@ -1,6 +1,7 @@
 // 💎 The Platinum Engine: The Divine Core. Immutable.
+import { createHash, timingSafeEqual } from 'node:crypto';
 import path from 'node:path';
-import express, { type ErrorRequestHandler, type Express, type RequestHandler } from 'express';
+import express, { type ErrorRequestHandler, type Express, type Request, type RequestHandler } from 'express';
 import { CassetteRuntime } from '../copper/loader';
 import { CassetteContractError } from '../errors';
 import { createKernel } from '../gold/kernel';
@@ -22,6 +23,12 @@ export interface ApertureOptions {
   idleMs?: number;
   /** Body limit for the Platinum core. Default `1mb`. */
   jsonLimit?: string;
+  /**
+   * Bearer token that unlocks `GET /stats` and `GET /__aperture/proof`.
+   * Unset (or an empty string) disables both routes entirely, so admin data is
+   * never exposed by accident.
+   */
+  adminToken?: string;
   onShed?: (event: ShedEvent) => void;
   onError?: (error: unknown, cassette?: string) => void;
 }
@@ -35,6 +42,27 @@ export interface Aperture {
 }
 
 const CORE_GET_ROUTES = ['/health', '/stats', '/__aperture/proof'] as const;
+
+function digest(value: string): Buffer {
+  return createHash('sha256').update(value, 'utf8').digest();
+}
+
+/** Extracts the token from a `Bearer` authorization header, case-insensitively. */
+function presentedBearer(req: Request): string | undefined {
+  const header = req.headers.authorization;
+  if (typeof header !== 'string') {
+    return undefined;
+  }
+  const separator = header.indexOf(' ');
+  if (separator < 0) {
+    return undefined;
+  }
+  if (header.slice(0, separator).toLowerCase() !== 'bearer') {
+    return undefined;
+  }
+  const token = header.slice(separator + 1).trim();
+  return token === '' ? undefined : token;
+}
 
 function isBodyParseError(error: unknown): boolean {
   if (!error || typeof error !== 'object') {
@@ -77,6 +105,18 @@ export function createAperture(options: ApertureOptions): Aperture {
   const app = express();
   app.disable('x-powered-by');
 
+  const adminToken = options.adminToken?.trim() ? options.adminToken.trim() : undefined;
+
+  // Headers first, so even a shed 503 or a 404 carries them.
+  app.use((_req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Referrer-Policy', 'no-referrer');
+    res.setHeader('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'");
+    res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+    next();
+  });
+
   // Tier 2 first: nothing below this line sees a request that was shed.
   app.use(silver.middleware);
 
@@ -97,8 +137,25 @@ export function createAperture(options: ApertureOptions): Aperture {
     },
   };
 
+  const requireAdmin: RequestHandler = (req, res, next) => {
+    if (!adminToken) {
+      res.status(404).json({ error: 'not_found', path: req.path });
+      return;
+    }
+    res.setHeader('Cache-Control', 'no-store');
+    const presented = presentedBearer(req);
+    // Compare digests: equal length regardless of input, so the comparison is
+    // constant-time and a wrong-length token cannot throw.
+    if (!presented || !timingSafeEqual(digest(presented), digest(adminToken))) {
+      res.setHeader('WWW-Authenticate', 'Bearer realm="aperture"');
+      res.status(401).json({ error: 'unauthorized' });
+      return;
+    }
+    next();
+  };
+
   for (const route of CORE_GET_ROUTES) {
-    app.get(route, coreHandlers[route]);
+    app.get(route, ...(route === '/health' ? [coreHandlers[route]] : [requireAdmin, coreHandlers[route]]));
   }
 
   app.use(express.json({ limit: options.jsonLimit ?? '1mb' }));

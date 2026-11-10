@@ -33,8 +33,8 @@ If you are seeing `503 {"error":"overloaded"}`, paste the full body and the
 reason (`memory` or `concurrency`), plus the output of:
 
 ```bash
-curl -s localhost:3000/stats
-curl -s localhost:3000/__aperture/proof
+curl -s -H "Authorization: Bearer $APERTURE_ADMIN_TOKEN" localhost:3000/stats
+curl -s -H "Authorization: Bearer $APERTURE_ADMIN_TOKEN" localhost:3000/__aperture/proof
 ```
 
 ## Environment
