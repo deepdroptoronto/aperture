@@ -59,6 +59,8 @@ Commercial licensing, trademark permission and security enquiries: **deepdropsof
 ## 📚 Documentation
 
 - **[Architecture Deep Dive](https://github.com/deepdroptoronto/aperture/blob/main/ARCHITECTURE.md)** — how the four tiers fit together, what each one is allowed to do, and where every guarantee is enforced in code.
+- **[Benchmarks](https://github.com/deepdroptoronto/aperture/blob/main/benchmarks/README.md)** — the 6,000-request flood proof: hardware, methodology, raw output, and how to reproduce it with `npm run bench:flood`.
+- **[Trademark Notice](https://github.com/deepdroptoronto/aperture/blob/main/TRADEMARK.md)** — the Marks claimed by DeepDrop Software Inc. ("Angel Armor", "Aperture Cassette Gateway", "DeepDrop") and the terms for using them.
 
 ---
 
@@ -116,9 +118,9 @@ The three core routes are `GET /health`, `GET /stats` and `GET /__aperture/proof
 
 ## 🚀 Quick start
 
-![Angel Armor Demo](./docs/demo.gif)
+<!-- ![Angel Armor Demo](./docs/demo.gif) -->
 
-> 🎬 **Placeholder — demo GIF not recorded yet.** Add the capture at `docs/demo.gif` to make the image above render.
+> 🎬 **Demo coming soon.** The screen capture isn't recorded yet — it will land at `docs/demo.gif`.
 
 ```bash
 npm install
