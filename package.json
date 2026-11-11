@@ -17,7 +17,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "npm run build && node --test dist/tests/",
+    "test": "npm run build && node --test \"dist/tests/*.test.js\"",
     "bench": "npm run build && node bench/shed.js",
     "bench:flood": "npm run build && node bench/flood.js",
     "typecheck:ui": "tsc -p packages/angel-armor-ui/tsconfig.json",

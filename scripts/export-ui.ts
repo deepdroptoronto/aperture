@@ -9,7 +9,7 @@ import path from 'node:path';
  * The archive root is `package/` so `npm install ./angel-armor-ui-1.0.0.tar.gz`
  * treats it exactly like an `npm pack` tarball. Run from the repository root:
  *
- *   node scripts/export-ui.ts      (Node 22.6+ strips the types)
+ *   node scripts/export-ui.ts      (Node 22.18+ / 24+ strips the types by default)
  *
  * Uses the system `tar`; on Windows, Git Bash and Windows 10+ both ship one.
  */
