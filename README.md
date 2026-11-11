@@ -56,6 +56,12 @@ Commercial licensing, trademark permission and security enquiries: **deepdropsof
 
 ---
 
+## 📚 Documentation
+
+- **[Architecture Deep Dive](https://github.com/deepdroptoronto/aperture/blob/main/ARCHITECTURE.md)** — how the four tiers fit together, what each one is allowed to do, and where every guarantee is enforced in code.
+
+---
+
 ## 🔁 The Request Flow
 
 ```text
@@ -110,7 +116,9 @@ The three core routes are `GET /health`, `GET /stats` and `GET /__aperture/proof
 
 ## 🚀 Quick start
 
-<!-- ![Angel Armor Demo](./docs/demo.gif) - Coming soon -->
+![Angel Armor Demo](./docs/demo.gif)
+
+> 🎬 **Placeholder — demo GIF not recorded yet.** Add the capture at `docs/demo.gif` to make the image above render.
 
 ```bash
 npm install
